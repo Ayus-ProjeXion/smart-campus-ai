@@ -1,4 +1,4 @@
-// app.js - Smart Campus AI Logic & Simulator
+// app.js - Smart Campus AI Logic, Vision Scanner & Simulator
 
 // ----------------------------------------------------
 // 1. DATASETS: CAMPUS NOTICES & STUDENT PERSONAS
@@ -12,6 +12,8 @@ const CAMPUS_NOTICES = [
     type: "Career",
     issuer: "Training & Placement Cell",
     deadline: "2026-10-28",
+    daysLeft: 1, // Urgency calculation: Red (<24-48h)
+    domain: "Software & AI",
     criteria: {
       allowedBranches: ["CSE", "IT", "AI-DS"],
       minCgpa: 7.5,
@@ -29,6 +31,8 @@ const CAMPUS_NOTICES = [
     type: "Mandatory",
     issuer: "Office of the Controller of Examinations",
     deadline: "2026-11-05",
+    daysLeft: 4, // Urgency: Amber (3-5 days)
+    domain: "Academics",
     criteria: {
       allowedBranches: ["ALL"],
       minCgpa: 0.0,
@@ -46,6 +50,8 @@ const CAMPUS_NOTICES = [
     type: "Competition",
     issuer: "Centre for Innovation & Incubation",
     deadline: "2026-11-12",
+    daysLeft: 11, // Urgency: Green (1+ week)
+    domain: "Innovation & Robotics",
     criteria: {
       allowedBranches: ["CSE", "IT", "ECE", "MECH", "CIVIL"],
       minCgpa: 6.0,
@@ -63,6 +69,8 @@ const CAMPUS_NOTICES = [
     type: "Career",
     issuer: "Placement Directorate",
     deadline: "2026-11-18",
+    daysLeft: 17, // Urgency: Green
+    domain: "Mechanical & Core",
     criteria: {
       allowedBranches: ["MECH", "CIVIL", "EEE"],
       minCgpa: 6.8,
@@ -84,7 +92,7 @@ const STUDENT_PERSONAS = [
     year: 4,
     cgpa: 8.4,
     activeBacklogs: 0,
-    interests: ["AI", "Full Stack", "TCS Digital"]
+    interests: ["Software & AI", "Hackathons"]
   },
   {
     id: "p-sneha",
@@ -94,7 +102,7 @@ const STUDENT_PERSONAS = [
     year: 4,
     cgpa: 7.1,
     activeBacklogs: 0,
-    interests: ["Design", "Manufacturing", "Core Engineering"]
+    interests: ["Mechanical & Core", "CAD & Design"]
   },
   {
     id: "p-vikram",
@@ -104,7 +112,7 @@ const STUDENT_PERSONAS = [
     year: 2,
     cgpa: 6.8,
     activeBacklogs: 1,
-    interests: ["Robotics", "IoT", "Hackathons"]
+    interests: ["Innovation & Robotics", "IoT"]
   }
 ];
 
@@ -117,6 +125,7 @@ const totalSlides = 6;
 let currentMode = "deck"; // 'deck' or 'demo'
 let selectedNoticeId = "not-1";
 let selectedPersonaId = "p-aarav";
+let uploadedNotice = null;
 
 // ----------------------------------------------------
 // 3. INITIALIZATION
@@ -128,6 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderPersonas();
   evaluateNoticeMatching();
   setupKeyboardNavigation();
+  setupDragAndDrop();
 });
 
 // ----------------------------------------------------
@@ -224,22 +234,52 @@ function switchMode(mode) {
 }
 
 // ----------------------------------------------------
-// 6. PROTOTYPE LOGIC: RENDER & ENGINE
+// 6. PROTOTYPE LOGIC: RENDER WITH FEED ALGORITHM & URGENCY
 // ----------------------------------------------------
 
 function renderNotices() {
   const container = document.getElementById("noticePicker");
   if (!container) return;
 
-  container.innerHTML = CAMPUS_NOTICES.map(n => `
-    <div class="notice-item ${n.id === selectedNoticeId ? 'selected' : ''}" onclick="selectNotice('${n.id}')">
-      <div class="notice-item-head">
-        <span class="notice-item-title">${n.title}</span>
-        <span class="notice-item-tag">${n.tag}</span>
+  const currentStudent = STUDENT_PERSONAS.find(p => p.id === selectedPersonaId);
+
+  // Interest-based feed sorting (Instagram Algorithm simulation!)
+  let displayList = uploadedNotice ? [uploadedNotice, ...CAMPUS_NOTICES] : [...CAMPUS_NOTICES];
+  
+  if (currentStudent) {
+    displayList.sort((a, b) => {
+      const aMatch = currentStudent.interests.some(i => a.domain.includes(i)) ? 1 : 0;
+      const bMatch = currentStudent.interests.some(i => b.domain.includes(i)) ? 1 : 0;
+      return bMatch - aMatch;
+    });
+  }
+
+  container.innerHTML = displayList.map(n => {
+    // Urgency Badge rendering
+    let urgencyHtml = "";
+    if (n.daysLeft <= 1) {
+      urgencyHtml = `<span class="urgency-badge urgency-red">🔴 &lt; 24h URGENT</span>`;
+    } else if (n.daysLeft <= 4) {
+      urgencyHtml = `<span class="urgency-badge urgency-amber">🟡 ${n.daysLeft} DAYS LEFT</span>`;
+    } else {
+      urgencyHtml = `<span class="urgency-badge urgency-green">🟢 ${n.daysLeft} DAYS LEFT</span>`;
+    }
+
+    const isMatch = currentStudent && currentStudent.interests.some(i => n.domain.includes(i));
+
+    return `
+      <div class="notice-item ${n.id === selectedNoticeId ? 'selected' : ''}" onclick="selectNotice('${n.id}')">
+        <div class="notice-item-head">
+          <span class="notice-item-title">${n.title}</span>
+          ${urgencyHtml}
+        </div>
+        <div class="notice-item-meta">
+          <span>Deadline: <strong>${n.deadline}</strong> • ${n.issuer}</span>
+          ${isMatch ? `<span style="color:#06b6d4; font-weight:700; margin-left:8px;">★ Matched Interest</span>` : ''}
+        </div>
       </div>
-      <div class="notice-item-meta">Deadline: <strong>${n.deadline}</strong> • ${n.issuer}</div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function renderPersonas() {
@@ -249,9 +289,12 @@ function renderPersonas() {
   container.innerHTML = STUDENT_PERSONAS.map(p => `
     <div class="persona-item ${p.id === selectedPersonaId ? 'selected' : ''}" onclick="selectPersona('${p.id}')">
       <div class="p-avatar">${p.avatar}</div>
-      <div>
+      <div style="flex:1;">
         <div class="p-name">${p.name}</div>
         <div class="p-meta">Year ${p.year} ${p.branch} • <strong>${p.cgpa} CGPA</strong> • ${p.activeBacklogs} Backlogs</div>
+        <div class="interest-chips">
+          ${p.interests.map(i => `<span class="chip-tag">${i}</span>`).join("")}
+        </div>
       </div>
     </div>
   `).join("");
@@ -266,6 +309,7 @@ function selectNotice(id) {
 function selectPersona(id) {
   selectedPersonaId = id;
   renderPersonas();
+  renderNotices(); // Re-rank feed based on newly selected student interests!
   evaluateNoticeMatching();
 }
 
@@ -274,11 +318,14 @@ function selectPersona(id) {
 // ----------------------------------------------------
 
 function evaluateNoticeMatching() {
-  const notice = CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
+  let notice = uploadedNotice && uploadedNotice.id === selectedNoticeId 
+    ? uploadedNotice 
+    : CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
+
   const student = STUDENT_PERSONAS.find(p => p.id === selectedPersonaId);
   if (!notice || !student) return;
 
-  // Simulate rule verification
+  // Strict Rule Checks
   const isBranchAllowed = notice.criteria.allowedBranches.includes("ALL") || 
                           notice.criteria.allowedBranches.includes(student.branch);
   const isCgpaAllowed = student.cgpa >= notice.criteria.minCgpa;
@@ -289,14 +336,11 @@ function evaluateNoticeMatching() {
 
   // Priority Calculation
   let priority = "P3 - Normal";
-  let priorityClass = "priority-p3";
   if (isEligible) {
-    if (notice.tag.includes("PLACEMENT") || notice.tag.includes("EXAM")) {
-      priority = "P1 - URGENT ACTION";
-      priorityClass = "priority-p1";
+    if (notice.daysLeft <= 1 || notice.tag.includes("PLACEMENT") || notice.tag.includes("EXAM")) {
+      priority = "P1 - CRITICAL ACTION";
     } else {
       priority = "P2 - HIGH RELEVANCE";
-      priorityClass = "priority-p2";
     }
   }
 
@@ -304,19 +348,19 @@ function evaluateNoticeMatching() {
   let reasons = [];
   if (!isBranchAllowed) reasons.push(`Branch '${student.branch}' not eligible (Allowed: ${notice.criteria.allowedBranches.join(", ")})`);
   if (!isCgpaAllowed) reasons.push(`CGPA ${student.cgpa} is below minimum requirement (${notice.criteria.minCgpa})`);
-  if (!isYearAllowed) reasons.push(`Year ${student.year} is below minimum required Year ${notice.criteria.minYear}`);
-  if (!isBacklogAllowed) reasons.push(`Has ${student.activeBacklogs} active backlogs (Maximum allowed: ${notice.criteria.maxBacklogs})`);
+  if (!isYearAllowed) reasons.push(`Year ${student.year} is below required Year ${notice.criteria.minYear}`);
+  if (!isBacklogAllowed) reasons.push(`Has ${student.activeBacklogs} active backlogs (Max allowed: ${notice.criteria.maxBacklogs})`);
 
   const reasonText = isEligible 
-    ? `Criteria strictly verified: ${student.branch} branch matched, CGPA ${student.cgpa} &ge; ${notice.criteria.minCgpa} minimum threshold, and zero backlog conflicts. Action queued.`
-    : `Ineligible: ${reasons.join(". ")}. AI has suppressed noise notification and recommended alternative campus activities.`;
+    ? `Criteria strictly verified: ${student.branch} branch matched, CGPA ${student.cgpa} &ge; ${notice.criteria.minCgpa} minimum cutoff, and zero backlog conflicts. Action queued.`
+    : `Filtered Out: ${reasons.join(". ")}. AI has suppressed noise notification and prioritized alternative opportunities.`;
 
   // Render Result Card
   const resultBox = document.getElementById("resultBox");
   resultBox.innerHTML = `
     <div class="result-badge-row">
       <span class="decision-badge ${isEligible ? 'badge-eligible' : 'badge-ineligible'}">
-        ${isEligible ? '✅ ELIGIBLE & ACTIONABLE' : '❌ INELIGIBLE FOR CRITERIA'}
+        ${isEligible ? '✅ ELIGIBLE & ACTIONABLE' : '❌ INELIGIBLE (CRITERIA MISMATCH)'}
       </span>
       <span class="priority-pill">${isEligible ? priority : 'FILTERED NOISE'}</span>
     </div>
@@ -327,7 +371,7 @@ function evaluateNoticeMatching() {
       <div><span class="detail-label">Action Deadline:</span> <span class="detail-val">${notice.deadline}</span></div>
       <div><span class="detail-label">Target Audience:</span> <span class="detail-val">${notice.criteria.allowedBranches.join(", ")} (Yr ${notice.criteria.minYear}+)</span></div>
       <div><span class="detail-label">CGPA Cutoff:</span> <span class="detail-val">&ge; ${notice.criteria.minCgpa}</span></div>
-      <div><span class="detail-label">Compensation/Value:</span> <span class="detail-val">${notice.compensation}</span></div>
+      <div><span class="detail-label">Value / Package:</span> <span class="detail-val">${notice.compensation}</span></div>
     </div>
 
     <div class="reasoning-box">
@@ -342,7 +386,95 @@ function evaluateNoticeMatching() {
 }
 
 // ----------------------------------------------------
-// 8. SIMULATING 1-CLICK ACTIONS
+// 8. SCREENSHOT & IMAGE OCR UPLOAD HANDLER
+// ----------------------------------------------------
+
+function setupDragAndDrop() {
+  const dropzone = document.getElementById("dropzone");
+  if (!dropzone) return;
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropzone.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  dropzone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    if (files.length > 0) {
+      processUploadedFile(files[0]);
+    }
+  });
+}
+
+function handleImageUpload(e) {
+  const file = e.target.files[0];
+  if (file) {
+    processUploadedFile(file);
+  }
+}
+
+function processUploadedFile(file) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById("imagePreview").src = e.target.result;
+    document.getElementById("previewContainer").style.display = "inline-block";
+    document.getElementById("dropTitle").innerText = `Scanning screenshot: ${file.name}...`;
+    document.getElementById("dropSub").innerText = "Multimodal OCR extracting event entities...";
+
+    showToast(`📸 Gemini Vision scanning image: "${file.name}"...`);
+
+    // Simulate real multimodal OCR extraction
+    setTimeout(() => {
+      uploadedNotice = {
+        id: "uploaded-" + Date.now(),
+        title: "Extracted: Google Cloud Campus Ideathon 2026",
+        tag: "SCREENSHOT OCR",
+        type: "Competition",
+        issuer: "Google Developer Student Clubs",
+        deadline: "2026-10-25",
+        daysLeft: 1,
+        domain: "Software & AI",
+        criteria: {
+          allowedBranches: ["CSE", "IT", "ECE"],
+          minCgpa: 7.0,
+          minYear: 2,
+          maxBacklogs: 1
+        },
+        rawSnippet: "Scanned from circular screenshot: Google Cloud Ideathon. Submit project architecture before 25th Oct. Min CGPA 7.0.",
+        compensation: "Prizes: Google Cloud Credits + Swag",
+        actionRequired: "Upload ideation deck on Google Dev community portal"
+      };
+
+      selectedNoticeId = uploadedNotice.id;
+      document.getElementById("dropTitle").innerText = `Extracted: ${uploadedNotice.title}`;
+      document.getElementById("dropSub").innerText = "✅ Entity extraction & rules complete!";
+      renderNotices();
+      evaluateNoticeMatching();
+      showToast(`⚡ Screenshot parsed successfully! Found deadline: ${uploadedNotice.deadline}`);
+    }, 1200);
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeUploadedImage(e) {
+  e.stopPropagation();
+  uploadedNotice = null;
+  document.getElementById("imagePreview").src = "";
+  document.getElementById("previewContainer").style.display = "none";
+  document.getElementById("dropTitle").innerText = "Drop a Notice Screenshot / Circular Photo";
+  document.getElementById("dropSub").innerText = "or click to browse image (PNG, JPG)";
+  selectedNoticeId = "not-1";
+  renderNotices();
+  evaluateNoticeMatching();
+}
+
+// ----------------------------------------------------
+// 9. 1-CLICK ACTION DISPATCHERS
 // ----------------------------------------------------
 
 function showToast(message) {
@@ -355,28 +487,47 @@ function showToast(message) {
 }
 
 function simulateCalendarAdd() {
-  const notice = CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
+  const notice = uploadedNotice && uploadedNotice.id === selectedNoticeId ? uploadedNotice : CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
   const student = STUDENT_PERSONAS.find(p => p.id === selectedPersonaId);
-  showToast(`📅 Event scheduled in Google Calendar: "${notice.title}" for ${student.name} on ${notice.deadline}. Reminder set 24h before!`);
+  
+  // Real .ics download simulation
+  const icsData = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Smart Campus AI//EN
+BEGIN:VEVENT
+SUMMARY:${notice.title}
+DESCRIPTION:${notice.actionRequired}
+DTSTART;VALUE=DATE:${notice.deadline.replace(/-/g, '')}
+DTEND;VALUE=DATE:${notice.deadline.replace(/-/g, '')}
+END:VEVENT
+END:VCALENDAR`;
+
+  const blob = new Blob([icsData], { type: "text/calendar;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", `${notice.id}-event.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  showToast(`📅 Calendar event created & downloaded: "${notice.title}" for ${student.name}!`);
 }
 
 function simulateWhatsAppAlert() {
-  const notice = CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
+  const notice = uploadedNotice && uploadedNotice.id === selectedNoticeId ? uploadedNotice : CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
   const student = STUDENT_PERSONAS.find(p => p.id === selectedPersonaId);
-  showToast(`💬 WhatsApp Dispatch sent to ${student.name} (+91 98XXX XXX12): "[Smart Campus AI] Action required before ${notice.deadline}: ${notice.actionRequired}"`);
+
+  const message = `🚨 *[Smart Campus AI Priority Alert]*\nHey ${student.name}! Action required for:\n📌 *${notice.title}*\n⏳ *Deadline:* ${notice.deadline}\n👉 *Next Step:* ${notice.actionRequired}`;
+  
+  // Open real WhatsApp web link in new tab or show toast
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+  window.open(waUrl, "_blank");
+
+  showToast(`💬 Dispatched WhatsApp priority reminder to ${student.name}!`);
 }
 
 function simulateAddToTodo() {
-  const notice = CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
+  const notice = uploadedNotice && uploadedNotice.id === selectedNoticeId ? uploadedNotice : CAMPUS_NOTICES.find(n => n.id === selectedNoticeId);
   showToast(`✅ Added to Student Checklist: "${notice.actionRequired} (Due: ${notice.deadline})"`);
-}
-
-function analyzeCustomNotice() {
-  const text = document.getElementById("customNoticeText").value.trim();
-  if (!text) {
-    alert("Please enter or paste notice text first.");
-    return;
-  }
-
-  showToast(`⚡ Multimodal Parser parsed custom circular: Detected 1 action deadline and CGPA constraints.`);
 }

@@ -1,6 +1,6 @@
 # 🎓 Smart Campus AI
 
-> **TCS Innovative Hackathon • Team Alexander The Great**  
+> **Autonomous Campus Operating System • Built by Ayusman**  
 > *Transforming campus notice chaos into deterministic, personalized 1-click student actions.*
 
 [![TCS Hackathon](https://img.shields.io/badge/TCS_Hackathon-Winner_Edition-blue?style=for-the-badge&logo=tata)](https://github.com)
@@ -95,7 +95,7 @@ To run this application locally with zero build tools or dependencies:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/smart-campus-ai.git
+   git clone https://github.com/Ayus-ProjeXion/smart-campus-ai.git
    cd smart-campus-ai
    ```
 2. Open `index.html` in any web browser:
@@ -109,6 +109,7 @@ To run this application locally with zero build tools or dependencies:
 
 ---
 
-## 👥 Team: Alexander The Great
-* **Track:** TCS Innovative Hackathon 2026
-* **Status:** Submission Ready & Production Scalable
+## 👤 Author & Lead Architect
+* **Lead Developer & Architect:** Ayusman ([@Ayus-ProjeXion](https://github.com/Ayus-ProjeXion))
+* **Architecture Blueprints:** [`PRD.md`](PRD.md) • [`architecture.md`](architecture.md) • [`phases.md`](phases.md) • [`rules.md`](rules.md) • [`design.md`](design.md) • [`memory.md`](memory.md)
+* **Status:** Production Scalable & Active Development
