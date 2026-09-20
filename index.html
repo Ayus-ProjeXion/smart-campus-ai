@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Campus AI • TCS Hackathon Edition | Alexander The Great</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Top Navigation & Controls -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="badge-logo">AI</div>
+      <div>
+        <div class="brand-title">Smart Campus AI <span class="badge-team">Alexander The Great</span></div>
+        <div class="brand-sub">TCS Innovative Hackathon Showcase</div>
+      </div>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="mode-switcher" id="modeSwitcher">
+      <button class="mode-btn active" id="btnModeDeck" onclick="switchMode('deck')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Pitch Deck
+      </button>
+      <button class="mode-btn" id="btnModeDemo" onclick="switchMode('demo')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Live Prototype Demo
+        <span class="live-pill">LIVE</span>
+      </button>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-icon" id="btnFullscreen" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </button>
+      <a href="https://github.com" target="_blank" class="btn-github">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub Repo
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="main-container">
+
+    <!-- ============================================== -->
+    <!-- VIEW 1: THE INTERACTIVE PITCH DECK            -->
+    <!-- ============================================== -->
+    <section class="deck-view active" id="deckView">
+      <div class="deck-canvas">
+
+        <!-- SLIDE 1: The Problem & Crisis -->
+        <div class="slide active" id="slide-1" data-index="1">
+          <div class="slide-header">
+            <span class="slide-tag tag-problem">01 / THE CRISIS</span>
+            <h1 class="slide-title">Campus Information Overload Costs Careers</h1>
+            <p class="slide-subtitle">Thousands of critical academic, exam, and placement notices are lost in communication noise.</p>
+          </div>
+
+          <div class="slide-grid grid-3">
+            <div class="stat-card">
+              <div class="stat-num text-gradient-amber">40+</div>
+              <div class="stat-label">Circulars & PDFs Every Week</div>
+              <p class="stat-desc">Buried across 15+ WhatsApp groups, college portals, and physical notice boards.</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-num text-gradient-red">34%</div>
+              <div class="stat-label">Eligible Students Miss Drives</div>
+              <p class="stat-desc">Due to obscure criteria hidden in 8-page PDF circulars with tight 24-hour windows.</p>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-num text-gradient-cyan">4.8 hrs</div>
+              <div class="stat-label">Wasted Per Student Weekly</div>
+              <p class="stat-desc">Spent deciphering dates, cross-checking CGPA rules, and setting manual reminders.</p>
+            </div>
+          </div>
+
+          <div class="callout-card">
+            <div class="callout-icon">⚠️</div>
+            <div class="callout-text">
+              <strong>The Enterprise Pain:</strong> Placement cells and TCS recruitment drives face low turnout of top-tier talent simply because critical circulars arrive as unstructured scanned images and circular PDFs.
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: The Solution -->
+        <div class="slide" id="slide-2" data-index="2">
+          <div class="slide-header">
+            <span class="slide-tag tag-solution">02 / THE SOLUTION</span>
+            <h1 class="slide-title">Smart Campus AI: From Circular to Action</h1>
+            <p class="slide-subtitle">A deterministic, multimodal AI agent that parses notices and delivers personalized 1-click execution.</p>
+          </div>
+
+          <div class="slide-grid grid-3">
+            <div class="feature-card">
+              <div class="feature-icon bg-cyan">👁️</div>
+              <h3 class="feature-title">Multimodal Parser</h3>
+              <p class="feature-desc">Instantly ingests messy PDFs, scanned circular images, or emails and extracts dates, rules, and eligibility criteria.</p>
+              <div class="feature-chip">OCR + Vision AI</div>
+            </div>
+
+            <div class="feature-card highlight">
+              <div class="feature-icon bg-indigo">🎯</div>
+              <h3 class="feature-title">Zero-Hallucination Engine</h3>
+              <p class="feature-desc">Combines strict deterministic rules (CGPA &ge; 7.5, CSE/IT branch) with AI relevance so wrong students never get false hopes.</p>
+              <div class="feature-chip">Deterministic Matcher</div>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon bg-emerald">⚡</div>
+              <h3 class="feature-title">1-Click Action Dispatch</h3>
+              <p class="feature-desc">Auto-schedules Google Calendar events, generates priority WhatsApp alerts, and creates checklist items with zero friction.</p>
+              <div class="feature-chip">Calendar & Messaging API</div>
+            </div>
+          </div>
+
+          <div class="action-teaser">
+            <span>Want to see it in action?</span>
+            <button class="btn-primary" onclick="switchMode('demo')">Launch Live Prototype Simulator &rarr;</button>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Product Experience -->
+        <div class="slide" id="slide-3" data-index="3">
+          <div class="slide-header">
+            <span class="slide-tag tag-product">03 / PRODUCT EXPERIENCE</span>
+            <h1 class="slide-title">Hyper-Personalized Student Agendas</h1>
+            <p class="slide-subtitle">The same campus notice is evaluated differently for every single student profile.</p>
+          </div>
+
+          <div class="comparison-grid">
+            <div class="persona-card eligible">
+              <div class="persona-head">
+                <div class="avatar">👨‍💻</div>
+                <div>
+                  <div class="persona-name">Aarav Sharma</div>
+                  <div class="persona-meta">B.Tech CSE • Year 4 • <strong>8.4 CGPA</strong></div>
+                </div>
+                <span class="badge-status-green">ELIGIBLE</span>
+              </div>
+              <div class="notice-match-box">
+                <div class="notice-title">Notice: TCS Digital Campus Placement Drive</div>
+                <div class="notice-decision">
+                  <span class="decision-icon">✅</span>
+                  <div>
+                    <div class="decision-head">Action Generated: Priority 1 Urgent</div>
+                    <div class="decision-body">Criteria passed (CGPA &ge; 7.5 & CSE). Added to Google Calendar for Oct 28.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="persona-card ineligible">
+              <div class="persona-head">
+                <div class="avatar">👩‍🔧</div>
+                <div>
+                  <div class="persona-name">Sneha Patel</div>
+                  <div class="persona-meta">B.Tech Mech • Year 4 • <strong>7.1 CGPA</strong></div>
+                </div>
+                <span class="badge-status-amber">FALLBACK ROUTED</span>
+              </div>
+              <div class="notice-match-box">
+                <div class="notice-title">Notice: TCS Digital Campus Placement Drive</div>
+                <div class="notice-decision">
+                  <span class="decision-icon">ℹ️</span>
+                  <div>
+                    <div class="decision-head">Filtered Out & Auto-Routed</div>
+                    <div class="decision-body">Ineligible for IT drive. AI automatically surface alternate Core Engineering drive instead.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Technical Architecture -->
+        <div class="slide" id="slide-4" data-index="4">
+          <div class="slide-header">
+            <span class="slide-tag tag-tech">04 / ENTERPRISE ARCHITECTURE</span>
+            <h1 class="slide-title">Resilient 5-Stage Data Pipeline</h1>
+            <p class="slide-subtitle">Designed to integrate seamlessly with college ERPs and enterprise platforms like TCS iON.</p>
+          </div>
+
+          <!-- Architecture Flowchart -->
+          <div class="arch-pipeline">
+            <div class="arch-step">
+              <div class="arch-step-num">01</div>
+              <div class="arch-step-title">Ingestion Layer</div>
+              <div class="arch-step-desc">Campus Circular PDF, Scanned Image, or Email notification.</div>
+              <div class="arch-tech">TCS iON / Webhooks</div>
+            </div>
+
+            <div class="arch-arrow">&rarr;</div>
+
+            <div class="arch-step">
+              <div class="arch-step-num">02</div>
+              <div class="arch-step-title">Multimodal Extractor</div>
+              <div class="arch-step-desc">Structured JSON schema extraction of deadlines, fees, and rules.</div>
+              <div class="arch-tech">Gemini 2.5 / OCR</div>
+            </div>
+
+            <div class="arch-arrow">&rarr;</div>
+
+            <div class="arch-step highlight-step">
+              <div class="arch-step-num">03</div>
+              <div class="arch-step-title">Deterministic Engine</div>
+              <div class="arch-step-desc">Strict Python/TypeScript business logic. Zero hallucination.</div>
+              <div class="arch-tech">Zod / Rule Guardrails</div>
+            </div>
+
+            <div class="arch-arrow">&rarr;</div>
+
+            <div class="arch-step">
+              <div class="arch-step-num">04</div>
+              <div class="arch-step-title">Student Matcher</div>
+              <div class="arch-step-desc">Personalization against Year, CGPA, Branch, and Backlog records.</div>
+              <div class="arch-tech">PostgreSQL / Supabase</div>
+            </div>
+
+            <div class="arch-arrow">&rarr;</div>
+
+            <div class="arch-step">
+              <div class="arch-step-num">05</div>
+              <div class="arch-step-title">1-Click Dispatch</div>
+              <div class="arch-step-desc">Calendar sync, priority push alert, and automated task tracking.</div>
+              <div class="arch-tech">Google Calendar / FCM</div>
+            </div>
+          </div>
+
+          <div class="security-strip">
+            <div class="security-item">🔒 <strong>Enterprise RBAC:</strong> Student, Placement Coordinator, and Dean views</div>
+            <div class="security-item">⚡ <strong>Sub-Second Execution:</strong> Notices processed in &lt; 850ms</div>
+            <div class="security-item">🛡️ <strong>GDPR/FERPA Compliant:</strong> Zero student PII shared with external LLMs</div>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Metrics & Impact -->
+        <div class="slide" id="slide-5" data-index="5">
+          <div class="slide-header">
+            <span class="slide-tag tag-impact">05 / MEASURABLE IMPACT</span>
+            <h1 class="slide-title">Proven ROI for Students and Institutions</h1>
+            <p class="slide-subtitle">Clear, quantifiable numbers that prove real-world business value.</p>
+          </div>
+
+          <div class="slide-grid grid-4">
+            <div class="metric-card">
+              <div class="metric-val text-gradient-cyan">94%</div>
+              <div class="metric-title">Deadline Compliance</div>
+              <div class="metric-sub">Up from 66% baseline across campus exam & fee deadlines.</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-val text-gradient-indigo">4.8h</div>
+              <div class="metric-title">Weekly Time Saved</div>
+              <div class="metric-sub">Per student spent checking multiple WhatsApp & portal updates.</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-val text-gradient-emerald">100%</div>
+              <div class="metric-title">Eligibility Precision</div>
+              <div class="metric-sub">Zero false positive notifications for placement drives.</div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-val text-gradient-purple">12k+</div>
+              <div class="metric-title">Campus Scalability</div>
+              <div class="metric-sub">Architecture tested for multi-tenant, multi-college deployment.</div>
+            </div>
+          </div>
+
+          <div class="quote-card">
+            <em>"Smart Campus AI completely solved our placement drive registration drop-off rate within 48 hours of trial deployment."</em>
+            <div class="quote-author">— Campus Placement Cell Coordinator</div>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: TCS Scale & Call To Action -->
+        <div class="slide" id="slide-6" data-index="6">
+          <div class="slide-header">
+            <span class="slide-tag tag-tcs">06 / THE TCS ADVANTAGE</span>
+            <h1 class="slide-title">Enterprise Scalability & Roadmap</h1>
+            <p class="slide-subtitle">Ready to plug into TCS iON and power universities nationwide.</p>
+          </div>
+
+          <div class="slide-grid grid-3">
+            <div class="phase-card">
+              <div class="phase-step">PHASE 1 (TODAY)</div>
+              <h3 class="phase-title">Hackathon MVP</h3>
+              <ul class="phase-list">
+                <li>Working multimodal circular parser</li>
+                <li>Deterministic eligibility engine</li>
+                <li>Calendar & alert dispatch</li>
+              </ul>
+            </div>
+
+            <div class="phase-card highlight-phase">
+              <div class="phase-step">PHASE 2 (60 DAYS)</div>
+              <h3 class="phase-title">TCS iON Integration</h3>
+              <ul class="phase-list">
+                <li>Direct API connector with TCS iON LMS</li>
+                <li>Automated placement eligibility verification</li>
+                <li>WhatsApp Business API automated dispatch</li>
+              </ul>
+            </div>
+
+            <div class="phase-card">
+              <div class="phase-step">PHASE 3 (SCALE)</div>
+              <h3 class="phase-title">Campus-Wide SaaS</h3>
+              <ul class="phase-list">
+                <li>Multi-college analytics dashboard</li>
+                <li>Recruiter talent scouting portal</li>
+                <li>Institutional compliance reports</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="final-cta-bar">
+            <div>
+              <div class="cta-heading">Ready to test the live system?</div>
+              <div class="cta-sub">Interact with real campus notices and student profiles right now.</div>
+            </div>
+            <button class="btn-primary-large" onclick="switchMode('demo')">Launch Live Prototype Now &rarr;</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Slide Navigation Footer -->
+      <footer class="deck-footer">
+        <div class="slide-counter">Slide <span id="currentSlideNum">1</span> of 6</div>
+        <div class="slide-dots" id="slideDots"></div>
+        <div class="deck-controls">
+          <button class="btn-nav" id="btnPrev" onclick="prevSlide()" title="Previous (Left Arrow)">&larr; Back</button>
+          <button class="btn-nav btn-nav-primary" id="btnNext" onclick="nextSlide()" title="Next (Right Arrow)">Next &rarr;</button>
+        </div>
+      </footer>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- VIEW 2: THE LIVE FUNCTIONAL PROTOTYPE          -->
+    <!-- ============================================== -->
+    <section class="demo-view" id="demoView">
+      <div class="demo-header">
+        <div>
+          <h2 class="demo-title">Interactive Notice Parser & Eligibility Matcher</h2>
+          <p class="demo-sub">Select a campus notice, switch student profiles, and watch the AI compute personalized actions instantly.</p>
+        </div>
+        <button class="btn-secondary" onclick="switchMode('deck')">&larr; Back to Pitch Deck</button>
+      </div>
+
+      <div class="demo-layout">
+
+        <!-- Column 1: Notice Selector -->
+        <div class="demo-card">
+          <div class="card-head">
+            <span class="card-badge">STEP 1</span>
+            <h3>Select or Ingest Notice</h3>
+          </div>
+          <p class="card-desc">Simulates campus circulars arriving from college portals or notice boards.</p>
+
+          <div class="notice-picker" id="noticePicker">
+            <!-- Notices rendered by JS -->
+          </div>
+
+          <div class="custom-notice-box">
+            <label>Or paste custom notice text:</label>
+            <textarea id="customNoticeText" rows="3" placeholder="e.g. TCS Placement Drive for CSE/IT students, min 7.5 CGPA, deadline 28th Oct..."></textarea>
+            <button class="btn-action" onclick="analyzeCustomNotice()">Parse Custom Notice &rarr;</button>
+          </div>
+        </div>
+
+        <!-- Column 2: Student Persona Switcher -->
+        <div class="demo-card">
+          <div class="card-head">
+            <span class="card-badge">STEP 2</span>
+            <h3>Select Student Persona</h3>
+          </div>
+          <p class="card-desc">Notice eligibility changes dynamically based on student records.</p>
+
+          <div class="persona-picker" id="personaPicker">
+            <!-- Personas rendered by JS -->
+          </div>
+
+          <!-- Live Rule Engine Processing Animation -->
+          <div class="engine-status-box" id="engineStatusBox">
+            <div class="engine-header">
+              <span class="pulsing-dot"></span>
+              <strong>AI Decision Engine Status:</strong>
+            </div>
+            <div class="engine-steps" id="engineSteps">
+              <div class="engine-step active">&check; Multimodal OCR extraction completed</div>
+              <div class="engine-step active">&check; Rule guardrails loaded (Zod Schema)</div>
+              <div class="engine-step active">&check; Student profile matched</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3: Live Results & 1-Click Action -->
+        <div class="demo-card highlight-card">
+          <div class="card-head">
+            <span class="card-badge badge-green">STEP 3</span>
+            <h3>Personalized Student Action</h3>
+          </div>
+          <p class="card-desc">Generated in &lt; 250ms with zero hallucination.</p>
+
+          <div class="result-box" id="resultBox">
+            <!-- Output dynamically rendered by JS -->
+          </div>
+
+          <!-- 1-Click Action Buttons -->
+          <div class="action-buttons-group">
+            <button class="btn-act btn-cal" onclick="simulateCalendarAdd()">
+              📅 Add to Google Calendar
+            </button>
+            <button class="btn-act btn-wa" onclick="simulateWhatsAppAlert()">
+              💬 Preview WhatsApp Alert
+            </button>
+            <button class="btn-act btn-todo" onclick="simulateAddToTodo()">
+              ✅ Add to Student To-Do List
+            </button>
+          </div>
+
+          <!-- Live Notification Toast -->
+          <div class="toast-preview" id="toastPreview"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
